@@ -1,22 +1,88 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dinas Ketahanan Pangan Kota Ternate</title>
-    <link rel="stylesheet" href="style.css" />
+
+    <!-- ICON + FONT -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* ================== 🟩 POPUP WRAPPER ================== */
+        .popup-overlay{
+            position: fixed; inset:0;
+            background: rgba(0,0,0,.8);
+            display:none;
+            justify-content:center;
+            align-items:center;
+            z-index:9999;
+            padding:10px;
+        }
+
+        /* ================== 🟩 POPUP CONTENT ================== */
+        .popup-box{
+            background:#fff;
+            border-radius:12px;
+            padding:12px;
+            max-width:95vw;
+            max-height:95vh;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            animation:fadeIn .3s;
+        }
+
+        @keyframes fadeIn{
+            from{opacity:0; transform:scale(.9);}
+            to{opacity:1; transform:scale(1);}
+        }
+
+        /* ================== 🟩 GAMBAR STRUKTUR ================== */
+        .popup-img{
+            max-width:100%;
+            max-height:70vh;
+            object-fit:contain;
+            cursor:grab;
+            transition:transform .25s;
+        }
+
+        /* ================== 🟩 ZOOM BUTTON ================== */
+        .zoom-controls{
+            display:flex;
+            gap:10px;
+            margin-top:10px;
+        }
+        .zoom-btn{
+            padding:8px 14px;
+            border:none;
+            border-radius:6px;
+            background:#007979;
+            color:white;
+            font-weight:bold;
+            cursor:pointer;
+        }
+        .close-popup{
+            margin-top:12px;
+            background:#c00000;
+            border:none;
+            padding:10px;
+            width:100%;
+            border-radius:6px;
+            color:white;
+            font-weight:bold;
+            cursor:pointer;
+        }
+    </style>
 </head>
 
 <body>
 
     <div class="container">
         <div class="profile-section">
-            <div class="profile-img">
-                <!-- kamu bisa ganti logo / foto -->
-                <img src="img/logo.png">
-            </div>
+            <div class="profile-img"><img src="img/logo.png"></div>
 
             <h2 class="title">Dinas Ketahanan Pangan</h2>
             <h3 class="subtitle">Kota Ternate</h3>
@@ -24,7 +90,6 @@
         </div>
 
         <div class="link-card">
-
             <a href="https://ketpang.ternatekota.go.id/" class="btn"><i class="fa fa-globe"></i> Website OPD</a>
             <a href="https://web.facebook.com/profile.php?id=61584612131769" class="btn"><i class="fab fa-facebook"></i> Facebook</a>
             <a href="https://www.instagram.com/disketpang_kota_ternate/" class="btn"><i class="fab fa-instagram"></i> Instagram</a>
@@ -33,12 +98,54 @@
             <a href="mailto:disketpangkotaternate@gmail.com" class="btn"><i class="fa fa-envelope"></i> Email</a>
             <a href="https://maps.app.goo.gl/R3BhzZYnQZTcFUb76" class="btn"><i class="fa fa-map-marker-alt"></i> Lokasi Kantor</a>
 
+            <!-- 🔥 Tombol Popup Struktur -->
+            <a href="#" class="btn" onclick="openPopup()">
+                <i class="fa fa-sitemap"></i> Struktur Organisasi
+            </a>
 
         </div>
 
         <p class="footer">© Dinas Ketahanan Pangan Kota Ternate</p>
-
     </div>
+
+<!-- ====================== 🔥 POPUP STRUKTUR DGN ZOOM ====================== -->
+<div id="popup" class="popup-overlay">
+    <div class="popup-box">
+        <img id="strukturImg" src="img/struktur.jpg" class="popup-img" alt="struktur"> <!-- Pastikan file ada -->
+        
+        <div class="zoom-controls">
+            <button class="zoom-btn" onclick="zoomIn()">+</button>
+            <button class="zoom-btn" onclick="zoomOut()">−</button>
+            <button class="zoom-btn" onclick="resetZoom()">Reset</button>
+        </div>
+
+        <button class="close-popup" onclick="closePopup()">Tutup</button>
+    </div>
+</div>
+
+<script>
+let scale=1, posX=0, posY=0, drag=false, img=document.getElementById("strukturImg");
+
+function openPopup(){ document.getElementById("popup").style.display="flex"; resetZoom(); }
+function closePopup(){ document.getElementById("popup").style.display="none"; }
+
+/* ZOOM FUNCTION */
+function zoomIn(){ scale+=.2; update(); }
+function zoomOut(){ if(scale>.4)scale-=.2; update(); }
+function resetZoom(){ scale=1; posX=0; posY=0; update(); }
+function update(){ img.style.transform=`translate(${posX}px,${posY}px) scale(${scale})`; }
+
+/* DRAG PICTURE */
+img.onmousedown=e=>{drag=true; startX=e.clientX-posX; startY=e.clientY-posY;}
+img.onmousemove=e=>{if(drag){posX=e.clientX-startX;posY=e.clientY-startY;update();}}
+img.onmouseup=()=>drag=false;
+img.onmouseleave=()=>drag=false;
+
+/* MOBILE DRAG */
+img.ontouchstart=e=>{drag=true; startX=e.touches[0].clientX-posX; startY=e.touches[0].clientY-posY;}
+img.ontouchmove=e=>{if(drag){posX=e.touches[0].clientX-startX;posY=e.touches[0].clientY-startY;update();}}
+img.ontouchend=()=>drag=false;
+</script>
 
 </body>
 </html>
